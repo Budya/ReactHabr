@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.CodeAnalysis.Semantics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace PersonalPortal
 {
@@ -32,11 +33,12 @@ namespace PersonalPortal
                 .GetConnectionString("DefaultConnection"), provider.GetService<IRepositoryContextFactory>()));
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseWebpackDevMiddleware();
             }
             app.UseStaticFiles();
             app.UseMvc(routes =>
@@ -44,6 +46,7 @@ namespace PersonalPortal
                 routes.MapRoute(
                     name: "DefaultApi",
                     template: "api/{controller}/{action}");
+                routes.MapSpaFallbackRoute("spa-fallback", new{controller = "home", action = "index"});
             });
         }
     }
